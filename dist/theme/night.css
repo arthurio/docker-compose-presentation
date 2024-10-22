@@ -222,7 +222,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
   tab-size: 2;
 }
 
-.reveal p > code {
+.reveal p > code, .reveal li > code {
   font-size: 90%;
   color: #a7e22e;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
