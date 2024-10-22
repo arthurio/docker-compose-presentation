@@ -1,0 +1,386 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>🐳 Docker Compose</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+        <style type="text/css">
+            code.mermaid {
+              line-height: 1;
+            }
+        </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <section>
+                    <h1>🐳</h1>
+                    <h3><s>docker-compose</s></h3>
+                    <h3>docker compose</h3>
+                    <aside class="notes">
+                        <p></p>
+                    </aside>
+                </section>
+                <section>
+                    <p>
+                        <img style="margin: -10px 15px;" height="50px" src="images/linkedin.png"/>
+                        <a style="text-decoration: none;" href="https://www.linkedin.com/in/arthurio/" target="_blank">linkedin.com/in/arthurio</a>
+                    </p>
+                    <p>
+                        <img style="margin: -10px 15px;" height="50px" src="images/minerva.png"/>
+                        <a style="text-decoration: none;" href="https://www.minervaproject.com" target="_blank">minervaproject.com</a>
+                    </p>
+                    <p>
+                        <img style="margin: -10px 15px;" height="50px" src="images/github.png"/>
+                        <a style="text-decoration: none;" href="https://github.com/arthurio/docker-compose-slides" target="_blank">github.com/arthurio/docker-compose-slides</a>
+                    </p>
+                    <aside class="notes">
+                        <p>I'm Arthur Rio, Lead Architect at <a href="https://www.minervaproject.com" target="_blank">Minerva Project</a>.</p>
+                    </aside>
+                </section>
+                <section data-markdown>
+                    # 🙏🏻
+                    ## Please use an alias
+
+                    ```bash
+                    alias dc="docker compose"
+                    ```
+                </section>
+                </section>
+                <section>
+                    <section data-markdown>
+                        # 📑
+                        ## docker-compose.yml
+
+                        ---
+
+                        # 🍽️
+                        ## Services
+
+                        ```yaml
+                        services:
+                          my-service:
+                            image: my-image
+                            build:
+                              ...
+                            entrypoint:
+                              - /bin/bash
+                            command:
+                              - sleep
+                              - infinity
+                            ports:
+                              - "80:80"
+                            environment:
+                              - FOO=foo
+                            volumes:
+                              - ./src:/src
+                            environment:
+                              FOO=foo
+                            links:
+                              - my-db
+                            depends_on:
+                              - my-setup
+                        ```
+
+                        ---
+
+                        # 🔊
+                        ## Volumes
+
+                        ```yaml
+                        services:
+                          my-service:
+                            volumes:
+                              - my-empty-volume:/data
+                        volumes:
+                          my-empty-volume:
+                        ```
+
+                        ---
+
+                        # 🛜
+                        ## Network
+
+                        ```mermaid
+                        graph LR
+                        A[Host\n192.168.0.2] --> B[Bridge\n172.17.0.1\n:81 -> :80]
+                            B --> C[Server\n172.17.0.10\n:80]
+                            C --> D[MySQL\n172.17.0.11]
+                            C --> E[Redis\n172.17.0.12]
+                            B --> D
+                            B --> E
+                        ```
+                    </section>
+                </section>
+                <section>
+                    <section data-markdown>
+                        # 🧑‍💻👩‍💻
+                        # Main commands
+
+                        ---
+
+                        # ⬆️
+                        ## up
+
+                        - Run in the background
+
+                        ```bash
+                        dc up -d
+                        ```
+
+                        - Target a specific service
+
+                        ```bash
+                        dc up -d my-service
+                        dc up -d --no-deps my-other-service
+                        ```
+
+                        ---
+
+                        # ⬇️
+                        ## down
+
+                        - Take down your services
+
+                        ```bash
+                        dc down
+                        ```
+
+                        - Remove orphans as well
+
+                        ```bash
+                        dc run one-off  # ran without --rm
+                        dc down --remove-orphans
+                        ```
+
+                        Note: TODO
+
+                        ---
+
+                        # 🏃‍♀️🏃‍♂️
+                        ## run
+
+                        - Keep the container around after completion
+
+                        ```bash
+                        dc run tests
+                        ```
+
+                        - Remove the container after completion
+
+                        ```bash
+                        dc run --rm tests
+                        ```
+
+                        ---
+
+                        ## run (continued)
+
+                        - Publish service ports
+
+                        ```bash
+                        dc run -P tests  # All ports
+                        dc run -p 81:80  # Specific port
+                                  ^   ^
+                               host   container
+                        ```
+
+                        - Set environment variables
+
+                        ```bash
+                        dc run -e FOO=foo tests
+                        export BAR=bar
+                        dc run -e BAR tests
+                        ```
+
+                        ---
+
+                        # 📄
+                        ## logs
+
+                        ```bash
+                        dc logs  # Print all logs
+                        dc logs -f  # Print and follow all logs
+                        dc logs -f my-service my-other-service # Specific services
+                        ```
+
+                        ---
+
+                        # 💻
+                        ## ls / ps
+
+                        - Show all active projects
+                        ```bash
+                        dc ls
+                        ```
+
+                        - Show all active services for current project
+                        ```bash
+                        dc ps
+                        ```
+                     </section>
+                </section>
+                <section>
+                    <section data-markdown>
+                        # 🐞🐛🐜🦟🪲🪳🕷️
+                        ## Debugging
+
+                        - Bring up your services
+                        ```bash
+                        dc up -d
+                        ```
+
+                        - Stop the one you want to debug
+                        ```bash
+                        dc stop my-server
+                        ```
+                        - Add a breakpoint somewhere in your code, then:
+                        ```bash
+                        dc run -P --rm my-server
+                        ```
+
+                        ---
+
+                        # ⚠️
+                        ## Warning
+
+                        If you are running your server with multiple threads, the debbuging console's rendering may get
+                        scrambled. To fix this, you can run the server with only one thread.
+                        ---
+
+
+                        ## Remote debugging
+
+                        One other option if you can't afford single threads is to use a `remote` debugger. Set the `breakpoint` in you server that you have kept running with `dc run` and then attach to it with your IDE or debugger program.
+
+                        ```python
+                        from pudb.remote import set_trace
+                        set_trace()
+                        ```
+
+                        Make sure that port `6889` is in your service's ports, then:
+
+                        ```bash
+                        dc up -d
+                        telnet 127.0.0.1 6899
+                        ```
+
+                        ---
+
+                        ## ![VSCode](images/vscode.png "VSCode") VSCode (from copilot)
+
+                        - Install the `ms-vscode-remote.remote-containers` extension
+                        - Open the command palette and run `Remote-Containers: Attach to Running Container...`
+                        - Select the container you want to debug
+                        - Add a breakpoint in your code
+                        - Run the debugger
+                    </section>
+                </section>
+                <section>
+                    <section data-markdown>
+                        # 💡
+                        ## Things I learned recently
+
+                        ---
+
+                        ## Profiles
+
+                        Don't start automatically with `up` unless specified.
+
+                        ```yaml
+                        services:
+                          my-service:
+                            profiles:
+                              - shell
+                        ```
+
+                        You don't have to specify the profile when using `run` but you do for `up`.
+
+                        ```bash
+                        dc --profile shell up
+                        dc --profile shell down
+                        dc run --rm my-service
+                        ```
+
+                        ---
+
+                        ## Dependency conditions
+
+                        ```bash
+                        depends_on:
+                          my-service:
+                            condition: service_started
+                          my-setup:
+                            condition: service_completed_successfully
+                        ```
+
+                        ---
+
+                        ## Network aliases
+
+                        ```yaml
+                        nginx:
+                          ...
+                          networks:
+                            default:
+                              aliases:
+                                - my-app.local.com
+                                - my-admin.local.com
+                        ```
+
+                        ---
+
+                        ## Projects
+
+                        By default docker compose uses the name of the parent folder of the `docker-compose.yml` file.
+                        But if you have a different configuration file for something like integration tests, you can
+                        specify the project name with the `--project-name` flag. This allows you to keep the same
+                        service names in both configuration files and not add different prefixes/suffixes.
+
+                        ```bash
+                        alias dci='docker compose --project-name "${PWD##*/}"-test -f docker-compose.integration-tests.yml'
+                        ```
+                    </section>
+                </section>
+            </div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/search/search.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+        <script src="plugin/mermaid/mermaid.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealSearch, RevealMarkdown, RevealHighlight, RevealNotes, RevealMermaid ],
+
+                slideNumber: "c/t",
+                mermaid: {
+                  "theme": "dark",
+                  "themeVariables": {
+                    "darkMode": true,
+                  },
+                },
+				controls: true,
+				progress: true,
+                // showNotes: "separate-page",  // Uncomment for printing pdf
+			});
+		</script>
+	</body>
+</html>
