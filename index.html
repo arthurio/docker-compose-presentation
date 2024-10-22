@@ -25,9 +25,6 @@
                     <h1>🐳</h1>
                     <h3><s>docker-compose</s></h3>
                     <h3>docker compose</h3>
-                    <aside class="notes">
-                        <p></p>
-                    </aside>
                 </section>
                 <section>
                     <p>
@@ -89,6 +86,7 @@
                             depends_on:
                               - my-setup
                         ```
+                        Note: entrypoint/command: Override Dockerfile, ports: open to host, volumes: mirror code, links: Connect to other services, depends_on: e.g. celery
 
                         ---
 
@@ -104,6 +102,7 @@
                           my-empty-volume:
                         ```
 
+                        Note: Useful for databases, shared data, shared static assets...
                         ---
 
                         # 🛜
